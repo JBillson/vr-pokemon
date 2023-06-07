@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Pokemon
 {
-    public class PokemonModel
+    public class Pokemon
     {
         [JsonProperty("abilities")] public List<Ability> abilities { get; set; }
 

@@ -13,15 +13,15 @@ namespace Api
         private static PokeApi _instance;
         public static PokeApi Instance => _instance ??= new PokeApi();
 
-        private readonly List<Pokemon> _cachedPokemon = new();
+        private readonly List<Pokemon.Pokemon> _cachedPokemon = new();
 
-        public async Task<Pokemon> GetPokemonByNameAsync(string pokemonName)
+        public async Task<Pokemon.Pokemon> GetPokemonByNameAsync(string pokemonName)
         {
             // get from cache
             var pokemon = GetFromCache(pokemonName);
             if (pokemon != null)
             {
-                Debug.Log($"Returning [{pokemon.name}] from cache");
+                Debug.Log($"Fetching [{pokemon.name}] from cache");
                 return pokemon;
             }
 
@@ -29,16 +29,21 @@ namespace Api
             var url = new Uri($"https://pokeapi.co/api/v2/pokemon/{pokemonName}");
             using var client = new HttpClient();
             var response = await client.GetAsync(url);
-            if (!response.IsSuccessStatusCode) return null;
-            var pokemonResponse = await response.Content.ReadAsStringAsync();
-            pokemon = JsonConvert.DeserializeObject<Pokemon>(pokemonResponse);
+            if (!response.IsSuccessStatusCode)
+            {
+                Debug.LogError($"Failed to fetch [{pokemonName}] from PokeApi");
+                return null;
+            }
             
-            Debug.Log($"Returning [{pokemon.name}] from API");
+            var pokemonResponse = await response.Content.ReadAsStringAsync();
+            pokemon = JsonConvert.DeserializeObject<Pokemon.Pokemon>(pokemonResponse);
+            
+            Debug.Log($"Fetching [{pokemon.name}] from API");
             AddToCache(pokemon);
             return pokemon;
         }
 
-        private void AddToCache(Pokemon pokemon)
+        private void AddToCache(Pokemon.Pokemon pokemon)
         {
             if (_cachedPokemon.Contains(pokemon)) return;
 
@@ -46,7 +51,7 @@ namespace Api
             _cachedPokemon.Add(pokemon);
         }
 
-        private Pokemon GetFromCache(string pokemonName)
+        private Pokemon.Pokemon GetFromCache(string pokemonName)
         {
             return _cachedPokemon.FirstOrDefault(x => x.name == pokemonName);
         }
