@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
-namespace Pokemon
+namespace Instances
 {
     public class PokemonInstance : MonoBehaviour
     {
@@ -17,7 +17,7 @@ namespace Pokemon
 
         private int _currentHealth;
         private int _maxHealth;
-        private Pokemon _pokemon;
+        private Models.PokemonData pokemonData;
         private Coroutine _healthSliderCoroutine;
         private Image _healthBarImage;
 
@@ -26,14 +26,14 @@ namespace Pokemon
             _healthBarImage = healthSlider.fillRect.GetComponent<Image>();
         }
 
-        public void Init(Pokemon pokemon)
+        public void Init(Models.PokemonData pokemonData)
         {
             InitReferences();
-            _pokemon = pokemon;
-            name = $"[{_pokemon.name}]";
-            nameText.text = _pokemon.name;
+            this.pokemonData = pokemonData;
+            name = $"[{this.pokemonData.name}]";
+            nameText.text = this.pokemonData.name;
 
-            _maxHealth = _pokemon.stats[0].base_stat;
+            _maxHealth = this.pokemonData.stats[0].base_stat;
             _currentHealth = _maxHealth;
 
             healthSlider.maxValue = _maxHealth;
@@ -96,7 +96,7 @@ namespace Pokemon
 
         private void Fainted()
         {
-            Debug.Log($"[{_pokemon.name}] fainted!");
+            Debug.Log($"[{pokemonData.name}] fainted!");
             Destroy(gameObject);
         }
     }

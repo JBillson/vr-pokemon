@@ -1,9 +1,10 @@
 ﻿using Api;
+using Instances;
 using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 using UnityEngine;
 
-namespace Pokemon
+namespace Factories
 {
     public class PokemonFactory : MonoBehaviour
     {
@@ -20,7 +21,7 @@ namespace Pokemon
                 pokemonName = "pikachu";
 #endif
 
-            var pokemon = await PokeApi.Instance.GetPokemonByNameAsync(pokemonName);
+            var pokemon = await PokeApi.Instance.GetPokemonDataByNameAsync(pokemonName);
             if (pokemon == null) return;
             var instance = Instantiate(pokemonPrefab, Vector3.zero, Quaternion.identity);
             instance.Init(pokemon);

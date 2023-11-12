@@ -13,10 +13,12 @@ namespace Api
         private static PokeApi _instance;
         public static PokeApi Instance => _instance ??= new PokeApi();
 
-        private readonly List<Pokemon.Pokemon> _cachedPokemon = new();
+        private readonly List<Models.PokemonData> _cachedPokemon = new();
 
-        public async Task<Pokemon.Pokemon> GetPokemonByNameAsync(string pokemonName)
+        public async Task<Models.PokemonData> GetPokemonDataByNameAsync(string pokemonName)
         {
+            pokemonName = pokemonName.ToLower();
+            
             // get from cache
             var pokemon = GetFromCache(pokemonName);
             if (pokemon != null)
@@ -36,24 +38,24 @@ namespace Api
             }
             
             var pokemonResponse = await response.Content.ReadAsStringAsync();
-            pokemon = JsonConvert.DeserializeObject<Pokemon.Pokemon>(pokemonResponse);
+            pokemon = JsonConvert.DeserializeObject<Models.PokemonData>(pokemonResponse);
             
             Debug.Log($"Fetching [{pokemon.name}] from API");
             AddToCache(pokemon);
             return pokemon;
         }
 
-        private void AddToCache(Pokemon.Pokemon pokemon)
+        private void AddToCache(Models.PokemonData pokemonData)
         {
-            if (_cachedPokemon.Contains(pokemon)) return;
+            if (_cachedPokemon.Contains(pokemonData)) return;
 
-            Debug.Log($"Adding [{pokemon.name}] to cache");
-            _cachedPokemon.Add(pokemon);
+            Debug.Log($"Adding [{pokemonData.name}] to cache");
+            _cachedPokemon.Add(pokemonData);
         }
 
-        private Pokemon.Pokemon GetFromCache(string pokemonName)
+        private Models.PokemonData GetFromCache(string pokemonName)
         {
-            return _cachedPokemon.FirstOrDefault(x => x.name == pokemonName);
+            return _cachedPokemon.FirstOrDefault(x => string.Equals(x.name, pokemonName, StringComparison.CurrentCultureIgnoreCase));
         }
     }
 }

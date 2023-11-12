@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Pokemon
+namespace Models
 {
-    public class Pokemon
+    public class PokemonData
     {
         [JsonProperty("abilities")] public List<Ability> abilities { get; set; }
 
